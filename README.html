@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Catálogo de Roupas</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
+      color: #333;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #fff;
+      margin-bottom: 30px;
+      text-shadow: 1px 1px 2px #000;
+    }
+
+    .login {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .login input {
+      padding: 10px;
+      font-size: 16px;
+      width: 250px;
+      border: none;
+      border-radius: 8px;
+      box-shadow: 0 0 5px #999;
+    }
+
+    .roupa-lista {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+
+    .roupa {
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      padding: 20px;
+      width: 250px;
+      transition: 0.3s;
+      position: relative;
+    }
+
+    .roupa:hover {
+      transform: scale(1.03);
+    }
+
+    .roupa img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-bottom: 10px;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    button, label {
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .editar { background: #2196f3; color: white; }
+    .excluir { background: #f44336; color: white; }
+    .oferta { background: #ff9800; color: white; }
+    .esgotado { background: #9e9e9e; color: white; }
+    .add-nova {
+      margin: 30px auto;
+      background: #4caf50;
+      color: white;
+      padding: 12px 18px;
+      border-radius: 8px;
+      display: block;
+    }
+
+    input[type="file"] {
+      margin: 8px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🛍️ Catálogo Fashion</h1>
+
+    <div class="login">
+      <input type="text" id="usuario" placeholder="Digite seu usuário" oninput="verificarUsuario()" />
+    </div>
+
+    <button class="add-nova" id="add-btn" onclick="abrirFormulario()" style="display:none;">+ Adicionar Nova Roupa</button>
+
+    <div class="roupa-lista" id="roupas"></div>
+  </div>
+
+  <!-- Formulário Modal -->
+  <div id="formulario-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6);">
+    <div style="background:#fff; padding:20px; max-width:400px; margin:80px auto; border-radius:12px;">
+      <h3>Adicionar Nova Roupa</h3>
+      <input type="text" id="nova-nome" placeholder="Nome da roupa" class="form-control" style="width:100%; margin-bottom:10px; padding:8px;">
+      <input type="number" id="nova-preco" placeholder="Preço" class="form-control" style="width:100%; margin-bottom:10px; padding:8px;">
+      <input type="file" id="nova-img" accept="image/*" />
+      <br><br>
+      <button onclick="adicionarRoupa()" style="background:#4caf50; color:white; padding:8px 12px;">Adicionar</button>
+      <button onclick="fecharFormulario()" style="background:#ccc; margin-left:10px;">Cancelar</button>
+    </div>
+  </div>
+
+  <script>
+    let roupas = [
+      { nome: "Camiseta Estilosa", preco: 59.90, status: "Disponível", imagem: "https://via.placeholder.com/300x200?text=Camiseta" },
+      { nome: "Calça Cargo", preco: 129.90, status: "Disponível", imagem: "https://via.placeholder.com/300x200?text=Calça" },
+      { nome: "Jaqueta Jeans", preco: 199.90, status: "Disponível", imagem: "https://via.placeholder.com/300x200?text=Jaqueta" }
+    ];
+
+    let usuario = "";
+
+    function verificarUsuario() {
+      usuario = document.getElementById("usuario").value.trim();
+      document.getElementById("add-btn").style.display = (usuario === "vivi2236") ? "block" : "none";
+      renderizarRoupas();
+    }
+
+    function renderizarRoupas() {
+      const container = document.getElementById("roupas");
+      container.innerHTML = "";
+
+      roupas.forEach((roupa, index) => {
+        const div = document.createElement("div");
+        div.className = "roupa";
+
+        div.innerHTML = `
+          <img src="${roupa.imagem}" alt="Imagem da roupa" />
+          <h3>${roupa.nome}</h3>
+          <p>R$ ${roupa.preco.toFixed(2)} - ${roupa.status}</p>
+        `;
+
+        if (usuario === "vivi2236") {
+          const botoes = document.createElement("div");
+          botoes.className = "btn-group";
+
+          botoes.innerHTML = `
+            <button class="editar" onclick="editarPreco(${index})">Editar Preço</button>
+            <button class="excluir" onclick="excluirRoupa(${index})">Excluir</button>
+            <button class="oferta" onclick="colocarOferta(${index})">Oferta</button>
+            <button class="esgotado" onclick="marcarEsgotado(${index})">Esgotar</button>
+            <label class="editar" style="cursor:pointer;">
+              📷 Editar Foto
+              <input type="file" accept="image/*" onchange="editarFoto(event, ${index})" style="display:none;">
+            </label>
+          `;
+
+          div.appendChild(botoes);
+        }
+
+        container.appendChild(div);
+      });
+    }
+
+    function editarPreco(index) {
+      const novoPreco = prompt("Digite o novo preço:");
+      if (novoPreco && !isNaN(parseFloat(novoPreco))) {
+        roupas[index].preco = parseFloat(novoPreco);
+        renderizarRoupas();
+      }
+    }
+
+    function excluirRoupa(index) {
+      if (confirm("Tem certeza que deseja excluir essa peça?")) {
+        roupas.splice(index, 1);
+        renderizarRoupas();
+      }
+    }
+
+    function colocarOferta(index) {
+      roupas[index].status = "🔥 Em Oferta!";
+      renderizarRoupas();
+    }
+
+    function marcarEsgotado(index) {
+      roupas[index].status = "❌ Esgotado";
+      renderizarRoupas();
+    }
+
+    function abrirFormulario() {
+      document.getElementById("formulario-modal").style.display = "block";
+    }
+
+    function fecharFormulario() {
+      document.getElementById("formulario-modal").style.display = "none";
+    }
+
+    function adicionarRoupa() {
+      const nome = document.getElementById("nova-nome").value;
+      const preco = parseFloat(document.getElementById("nova-preco").value);
+      const imagemInput = document.getElementById("nova-img");
+
+      if (!nome || isNaN(preco) || !imagemInput.files[0]) {
+        alert("Preencha todos os campos.");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        roupas.push({ nome, preco, status: "Disponível", imagem: e.target.result });
+        fecharFormulario();
+        renderizarRoupas();
+      };
+      reader.readAsDataURL(imagemInput.files[0]);
+    }
+
+    function editarFoto(event, index) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        roupas[index].imagem = e.target.result;
+        renderizarRoupas();
+      };
+      reader.readAsDataURL(file);
+    }
+
+    renderizarRoupas(); // Inicial
+  </script>
+</body>
+</html>
