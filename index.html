@@ -106,7 +106,7 @@
     </div>
 
     <div style="text-align: center; margin-bottom: 20px;">
-      <button onclick="exportarExcel()" style="background: #3f51b5; color: white; padding: 10px 16px; border-radius: 8px; border: none; font-size: 14px;">
+      <button id="exportar-btn" onclick="exportarExcel()" style="display:none; background: #3f51b5; color: white; padding: 10px 16px; border-radius: 8px; border: none; font-size: 14px;">
         📥 Exportar para Excel
       </button>
     </div>
@@ -135,7 +135,18 @@
 
     function verificarUsuario() {
       usuario = document.getElementById("usuario").value.trim();
-      document.getElementById("add-btn").style.display = (usuario === "vivi2236") ? "block" : "none";
+
+      const btnAdd = document.getElementById("add-btn");
+      const btnExportar = document.getElementById("exportar-btn");
+
+      if (usuario === "vivi2236") {
+        btnAdd.style.display = "block";
+        btnExportar.style.display = "inline-block";
+      } else {
+        btnAdd.style.display = "none";
+        btnExportar.style.display = "none";
+      }
+
       renderizarRoupas();
     }
 
