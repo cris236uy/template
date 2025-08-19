@@ -1,271 +1,66 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Catálogo de Roupas</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(135deg, #f6d365 0%, #fda085 100%);
-    }
+Perfeito 🚀 você quer que ele abra o **Chrome visível** (modo normal) e não só headless.
+Vou ajustar o código para ter as duas opções: **headless** ou **normal**.
 
-    .container {
-      max-width: 1000px;
-      margin: auto;
-      padding: 20px;
-    }
+---
 
-    h1 {
-      text-align: center;
-      color: white;
-      text-shadow: 1px 1px 2px black;
-    }
+## 📌 Código atualizado (`app.py`)
 
-    .login {
-      text-align: center;
-      margin-bottom: 20px;
-    }
+```python
+import streamlit as st
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
+import time
 
-    .login input {
-      padding: 10px;
-      font-size: 16px;
-      border-radius: 10px;
-      border: none;
-      width: 250px;
-      box-shadow: 0 0 4px #999;
-    }
+# Configuração da página
+st.set_page_config(page_title="Automação Kaggle", layout="centered")
+st.title("🤖 Automação Selenium no Kaggle")
 
-    .roupa-lista {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
-    }
+# Escolha do modo
+modo = st.radio("Escolha o modo de execução do Selenium:", ["Normal (visível)", "Headless (oculto)"])
 
-    .roupa {
-      background: white;
-      padding: 15px;
-      border-radius: 12px;
-      width: 250px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-      position: relative;
-    }
+if st.button("Executar Automação"):
+    st.write("🔍 Iniciando automação no Kaggle...")
 
-    .roupa img {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-      border-radius: 10px;
-    }
+    try:
+        # Configura o Chrome
+        chrome_options = Options()
+        if modo == "Headless (oculto)":
+            chrome_options.add_argument("--headless")
+            chrome_options.add_argument("--disable-gpu")
+            chrome_options.add_argument("--no-sandbox")
 
-    .btn-group button,
-    .btn-group label {
-      margin-top: 8px;
-      display: inline-block;
-      padding: 6px 10px;
-      border: none;
-      border-radius: 6px;
-      font-size: 12px;
-      cursor: pointer;
-    }
+        # Inicializa o navegador
+        service = Service()
+        driver = webdriver.Chrome(service=service, options=chrome_options)
 
-    .editar { background: #2196f3; color: white; }
-    .excluir { background: #f44336; color: white; }
-    .oferta { background: #ff9800; color: white; }
-    .esgotado { background: #9e9e9e; color: white; }
+        # Abre a página do Titanic no Kaggle
+        driver.get("https://www.kaggle.com/c/titanic")
+        time.sleep(3)
 
-    .add-nova {
-      display: none;
-      margin: 20px auto;
-      background: #4caf50;
-      color: white;
-      padding: 10px 16px;
-      border-radius: 8px;
-      font-size: 14px;
-      cursor: pointer;
-      border: none;
-    }
+        # Pega o título da competição
+        feito = driver.find_element(By.XPATH,
+            '//*[@id="site-content"]/div[2]/div/div/div[2]/div[2]/div[1]/h1'
+        ).text
 
-    input[type="file"] {
-      display: none;
-    }
-  </style>
+        st.success(f"✅ Deu tudo certo! O título da competição é: **{feito}**")
 
-  <!-- SheetJS para exportar Excel -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-</head>
-<body>
-  <div class="container">
-    <h1>🛍️ Catálogo de Roupas</h1>
+        # Fecha o navegador
+        driver.quit()
 
-    <div class="login">
-      <input id="usuario" type="text" placeholder="Digite seu usuário" oninput="verificarUsuario()" />
-    </div>
+    except Exception as e:
+        st.error(f"❌ Ocorreu um erro: {e}")
+```
 
-    <div style="text-align: center; margin-bottom: 20px;">
-      <button onclick="exportarExcel()" style="background: #3f51b5; color: white; padding: 10px 16px; border-radius: 8px; border: none; font-size: 14px;">
-        📥 Exportar para Excel
-      </button>
-    </div>
+---
 
-    <button class="add-nova" id="add-btn" onclick="abrirFormulario()">+ Adicionar Roupa</button>
+### 🔑 O que mudou
 
-    <div class="roupa-lista" id="roupas"></div>
-  </div>
+* Adicionei um `radio` no Streamlit para você escolher **modo visível** ou **headless**.
+* No modo **Normal (visível)**, o Chrome abre na sua frente e você vê a automação rodando.
+* No modo **Headless (oculto)**, ele roda em segundo plano.
 
-  <!-- Modal -->
-  <div id="formulario-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6);">
-    <div style="background:#fff; max-width:400px; margin:60px auto; padding:20px; border-radius:10px;">
-      <h3>Nova Roupa</h3>
-      <input type="text" id="nova-nome" placeholder="Nome" style="width:100%; padding:8px; margin-bottom:10px;">
-      <input type="number" id="nova-preco" placeholder="Preço" style="width:100%; padding:8px; margin-bottom:10px;">
-      <input type="file" id="nova-img" accept="image/*" />
-      <br><br>
-      <button onclick="adicionarRoupa()" style="background:#4caf50; color:white; padding:8px 12px;">Adicionar</button>
-      <button onclick="fecharFormulario()" style="margin-left:10px;">Cancelar</button>
-    </div>
-  </div>
+---
 
-  <script>
-    let usuario = "";
-    let roupas = JSON.parse(localStorage.getItem("roupas")) || [];
-
-    function verificarUsuario() {
-      usuario = document.getElementById("usuario").value.trim();
-      document.getElementById("add-btn").style.display = (usuario === "vivi2236") ? "block" : "none";
-      renderizarRoupas();
-    }
-
-    function salvarLocal() {
-      localStorage.setItem("roupas", JSON.stringify(roupas));
-    }
-
-    function abrirFormulario() {
-      document.getElementById("formulario-modal").style.display = "block";
-    }
-
-    function fecharFormulario() {
-      document.getElementById("formulario-modal").style.display = "none";
-    }
-
-    function adicionarRoupa() {
-      const nome = document.getElementById("nova-nome").value;
-      const preco = parseFloat(document.getElementById("nova-preco").value);
-      const file = document.getElementById("nova-img").files[0];
-
-      if (!nome || isNaN(preco) || !file) {
-        alert("Preencha tudo!");
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        roupas.push({ nome, preco, status: "Disponível", imagem: e.target.result });
-        salvarLocal();
-        fecharFormulario();
-        renderizarRoupas();
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function renderizarRoupas() {
-      const lista = document.getElementById("roupas");
-      lista.innerHTML = "";
-
-      roupas.forEach((r, i) => {
-        const div = document.createElement("div");
-        div.className = "roupa";
-        div.innerHTML = `
-          <img src="${r.imagem}" />
-          <h3>${r.nome}</h3>
-          <p>R$ ${r.preco.toFixed(2)} - ${r.status}</p>
-        `;
-
-        if (usuario === "vivi2236") {
-          const grupo = document.createElement("div");
-          grupo.className = "btn-group";
-          grupo.innerHTML = `
-            <button class="editar" onclick="editarPreco(${i})">Editar Preço</button>
-            <button class="excluir" onclick="excluirRoupa(${i})">Excluir</button>
-            <button class="oferta" onclick="marcarOferta(${i})">Oferta</button>
-            <button class="esgotado" onclick="marcarEsgotado(${i})">Esgotar</button>
-            <label class="editar">📷 Editar Foto
-              <input type="file" onchange="editarImagem(event, ${i})">
-            </label>
-          `;
-          div.appendChild(grupo);
-        }
-
-        lista.appendChild(div);
-      });
-    }
-
-    function editarPreco(index) {
-      const novo = prompt("Novo preço:");
-      if (novo && !isNaN(novo)) {
-        roupas[index].preco = parseFloat(novo);
-        salvarLocal();
-        renderizarRoupas();
-      }
-    }
-
-    function excluirRoupa(index) {
-      if (confirm("Excluir essa peça?")) {
-        roupas.splice(index, 1);
-        salvarLocal();
-        renderizarRoupas();
-      }
-    }
-
-    function marcarOferta(index) {
-      roupas[index].status = "🔥 Em Oferta!";
-      salvarLocal();
-      renderizarRoupas();
-    }
-
-    function marcarEsgotado(index) {
-      roupas[index].status = "❌ Esgotado";
-      salvarLocal();
-      renderizarRoupas();
-    }
-
-    function editarImagem(event, index) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        roupas[index].imagem = e.target.result;
-        salvarLocal();
-        renderizarRoupas();
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function exportarExcel() {
-      if (roupas.length === 0) {
-        alert("Não há roupas para exportar.");
-        return;
-      }
-
-      const dados = roupas.map(r => ({
-        Nome: r.nome,
-        Preço: r.preco,
-        Status: r.status,
-        Imagem: r.imagem
-      }));
-
-      const worksheet = XLSX.utils.json_to_sheet(dados);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Catálogo");
-
-      XLSX.writeFile(workbook, "catalogo_de_roupas.xlsx");
-    }
-
-    renderizarRoupas();
-  </script>
-</body>
-</html>
+👉 Quer que eu adicione também a opção de **escolher qualquer link** (não só o Kaggle Titanic), digitando no Streamlit e o Selenium abrir e capturar o título da página?
