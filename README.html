@@ -1,66 +1,39 @@
-Perfeito 🚀 você quer que ele abra o **Chrome visível** (modo normal) e não só headless.
-Vou ajustar o código para ter as duas opções: **headless** ou **normal**.
-
----
-
-## 📌 Código atualizado (`app.py`)
-
-```python
 import streamlit as st
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.options import Options
-import time
+from PIL import Image
+import pandas as pd
+import os
 
-# Configuração da página
-st.set_page_config(page_title="Automação Kaggle", layout="centered")
-st.title("🤖 Automação Selenium no Kaggle")
+st.set_page_config(page_title="Controle de Estoque - Facilities", layout="wide")
+st.title("📦 Sistema de Controle de Estoque")
 
-# Escolha do modo
-modo = st.radio("Escolha o modo de execução do Selenium:", ["Normal (visível)", "Headless (oculto)"])
+# --- Função para detectar itens na imagem ---
+def detectar_itens(imagem):
+    # Aqui você pode integrar um modelo real de detecção
+    # Por enquanto, simulamos resultados
+    itens_detectados = {
+        "Papel": 10,
+        "Copos": 20,
+        "Produto de Limpeza": 5
+    }
+    return itens_detectados
 
-if st.button("Executar Automação"):
-    st.write("🔍 Iniciando automação no Kaggle...")
+# --- Função para gerar relatório ---
+def gerar_relatorio_estoque(lista_itens, arquivo_saida="estoque_relatorio.xlsx"):
+    df = pd.DataFrame(lista_itens)
+    df.to_excel(arquivo_saida, index=False)
+    st.success(f"✅ Relatório gerado: {arquivo_saida}")
 
-    try:
-        # Configura o Chrome
-        chrome_options = Options()
-        if modo == "Headless (oculto)":
-            chrome_options.add_argument("--headless")
-            chrome_options.add_argument("--disable-gpu")
-            chrome_options.add_argument("--no-sandbox")
+# --- Upload da imagem ---
+arquivo = st.file_uploader("Envie uma foto do estoque", type=["jpg", "png"])
+if arquivo:
+    imagem = Image.open(arquivo)
+    st.image(imagem, caption="Imagem enviada", use_column_width=True)
 
-        # Inicializa o navegador
-        service = Service()
-        driver = webdriver.Chrome(service=service, options=chrome_options)
+    # Detectar itens
+    itens = detectar_itens(arquivo)
+    st.subheader("Itens detectados:")
+    st.json(itens)
 
-        # Abre a página do Titanic no Kaggle
-        driver.get("https://www.kaggle.com/c/titanic")
-        time.sleep(3)
-
-        # Pega o título da competição
-        feito = driver.find_element(By.XPATH,
-            '//*[@id="site-content"]/div[2]/div/div/div[2]/div[2]/div[1]/h1'
-        ).text
-
-        st.success(f"✅ Deu tudo certo! O título da competição é: **{feito}**")
-
-        # Fecha o navegador
-        driver.quit()
-
-    except Exception as e:
-        st.error(f"❌ Ocorreu um erro: {e}")
-```
-
----
-
-### 🔑 O que mudou
-
-* Adicionei um `radio` no Streamlit para você escolher **modo visível** ou **headless**.
-* No modo **Normal (visível)**, o Chrome abre na sua frente e você vê a automação rodando.
-* No modo **Headless (oculto)**, ele roda em segundo plano.
-
----
-
-👉 Quer que eu adicione também a opção de **escolher qualquer link** (não só o Kaggle Titanic), digitando no Streamlit e o Selenium abrir e capturar o título da página?
+    # Botão para gerar relatório
+    if st.button("Gerar relatório"):
+        gerar_relatorio_estoque([itens])
