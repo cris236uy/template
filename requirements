@@ -2,3 +2,4 @@ streamlit
 pandas
 plotly-express
 google-genai
+xlsxwriter
