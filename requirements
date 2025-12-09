@@ -3,3 +3,4 @@ pandas
 plotly-express
 google-genai
 xlsxwriter
+openpyxl
