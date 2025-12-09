@@ -1,6 +1,6 @@
 streamlit
 pandas
-plotly-express
+plotly
 google-genai
-xlsxwriter
-openpyxl
+openpyxl  # Necessário para LER .xlsx
+xlsxwriter # Necessário para ESCREVER .xlsx
