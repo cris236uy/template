@@ -5,7 +5,7 @@ import plotly.express as px  # Necessário para o gráfico
 from google import genai
 from google.genai.errors import APIError
 import os  # Para uso geral
-from xlsxwriter import Workbook
+
 
 # 💰 App de Gestão Financeira com IA Gemini
 
@@ -216,4 +216,5 @@ if st.button("Gerar Análise e Dicas do Gemini"):
             st.error("Erro ao conectar com a API Gemini. Verifique sua chave de API e sua conexão com a internet.")
         except Exception as e:
             st.error(f"Ocorreu um erro: {e}")
+
 
