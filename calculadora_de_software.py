@@ -9,21 +9,32 @@ import os  # Para uso geral
 # 💰 App de Gestão Financeira com IA Gemini
 
 # --- 1. CONFIGURAÇÃO DA CHAVE E CLIENTE GEMINI ---
-try:
-    # Tenta carregar a chave do arquivo .streamlit/secrets.toml
-    api_key = st.secrets["GEMINI_API_KEY"]
-except KeyError:
-    st.error("Erro: A chave 'GEMINI_API_KEY' não foi encontrada. Configure-a na pasta .streamlit.")
+
+st.sidebar.subheader("🔑 Configuração da API Gemini")
+
+# Input para o usuário digitar a própria chave
+api_key_input = st.sidebar.text_input("Insira sua GEMINI_API_KEY:", type="password")
+
+# Botão para salvar a chave
+if st.sidebar.button("Salvar chave"):
+    if api_key_input:
+        st.session_state.api_key = api_key_input
+        st.sidebar.success("Chave salva com sucesso! 🎯")
+    else:
+        st.sidebar.error("Por favor, insira uma chave válida.")
+
+# Se a chave ainda não foi configurada, interrompe o app
+if "api_key" not in st.session_state:
+    st.warning("⚠️ Insira e salve sua chave de API para habilitar a IA.")
     st.stop()
 
+# Inicializa o Gemini com a chave salva
 try:
-    # Inicializa o cliente e o modelo corretamente
-    client = genai.Client(api_key=api_key)
-    MODEL_NAME = 'gemini-2.5-flash'
+    client = genai.Client(api_key=st.session_state.api_key)
+    MODEL_NAME = "gemini-2.5-flash"
 except Exception as e:
     st.error(f"Erro ao inicializar o cliente Gemini: {e}")
     st.stop()
-
 
 # --- FUNÇÕES ---
 
@@ -213,6 +224,7 @@ if st.button("Gerar Análise e Dicas do Gemini"):
             st.error("Erro ao conectar com a API Gemini. Verifique sua chave de API e sua conexão com a internet.")
         except Exception as e:
             st.error(f"Ocorreu um erro: {e}")
+
 
 
 
