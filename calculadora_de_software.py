@@ -1,4 +1,4 @@
-<<<<<<< Updated upstream
+
 import streamlit as st
 import pandas as pd
 import io  # Necessário para a exportação de Excel na memória
@@ -216,6 +216,7 @@ if st.button("Gerar Análise e Dicas do Gemini"):
         except APIError:
             st.error("Erro ao conectar com a API Gemini. Verifique sua chave de API e sua conexão com a internet.")
         except Exception as e:
+
 =======
 import streamlit as st
 import pandas as pd
